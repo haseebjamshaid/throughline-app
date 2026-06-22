@@ -21,5 +21,6 @@ app/.vite/
 .vscode/*
 !.vscode/extensions.json
 
-# --- local working doc: session handoff (not committed) ---
+# --- local working docs (not committed) ---
 handoff.md
+IDEAS.md
