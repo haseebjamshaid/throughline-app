@@ -1,0 +1,137 @@
+@import 'tailwindcss';
+
+/* Local font faces (offline-first: bundled via @fontsource, never Google Fonts
+   at runtime).
+   - Fraunces (variable, soft optical) — display & headings, lowercase.
+   - EB Garamond — note bodies / reading / the thread's voice (incl. italic).
+   - Nunito Sans — ui labels, nav, metadata, buttons (warm humanist). */
+@import '@fontsource-variable/fraunces/index.css';
+@import '@fontsource/eb-garamond/400.css';
+@import '@fontsource/eb-garamond/400-italic.css';
+@import '@fontsource/eb-garamond/500.css';
+@import '@fontsource/nunito-sans/400.css';
+@import '@fontsource/nunito-sans/500.css';
+@import '@fontsource/nunito-sans/600.css';
+
+/*
+  throughline design tokens — "nature distilled".
+  Warm muted cream paper, warm brown ink, a small spectrum of vintage earth
+  accents (terracotta, clay, olive, sand, gold). Low-contrast and gentle in dim
+  light: no pure white, no pure black, no harsh edges. Depth comes from soft
+  warm shadows + layered surfaces, not hard borders. Organic rounded radii.
+  everything is lowercase.
+
+  Tailwind v4 CSS-first config: these become utilities such as bg-paper,
+  bg-card, text-ink, text-ink-soft, text-terracotta, border-border,
+  font-display, font-body, font-label, shadow-soft, rounded-card, etc.
+*/
+@theme {
+  /* surfaces — muted warm cream paper */
+  --color-paper: #efe6d0; /* page background */
+  --color-paper-dim: #e7dcc2; /* sunken sections */
+  --color-card: #f7f0df; /* raised surface */
+
+  /* text — warm browns */
+  --color-ink: #43372a; /* primary text (~7:1 on paper) */
+  --color-ink-soft: #8c7b64; /* muted taupe secondary / labels */
+
+  /* accents — vintage earth */
+  --color-terracotta: #c67b5c; /* primary accent */
+  --color-clay: #b5651d; /* deeper — CTAs / emphasis / high-contrast text */
+  --color-olive: #6f7444; /* secondary / nature accent */
+  --color-sand: #d4c4a8; /* tertiary surface */
+  --color-gold: #cba35f; /* subtle highlight */
+
+  /* borders — soft warm */
+  --color-border: #e0d3b6;
+  --color-hairline: rgba(67, 55, 42, 0.1); /* low-alpha brown hairline */
+  --color-hairline-strong: rgba(67, 55, 42, 0.18);
+
+  /* fonts */
+  --font-display:
+    'Fraunces Variable', 'Fraunces', ui-serif, Georgia, Cambria, serif;
+  --font-body:
+    'EB Garamond', ui-serif, Georgia, Cambria, 'Times New Roman', serif;
+  --font-label:
+    'Nunito Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI',
+    sans-serif;
+
+  /* soft, warm depth — never hard shadows */
+  --shadow-soft:
+    0 10px 30px -14px rgba(67, 55, 42, 0.22),
+    0 2px 6px -2px rgba(67, 55, 42, 0.1);
+  --shadow-lift:
+    0 16px 40px -16px rgba(67, 55, 42, 0.28),
+    0 4px 10px -3px rgba(67, 55, 42, 0.12);
+
+  /* organic rounded radii */
+  --radius-field: 14px;
+  --radius-card: 20px;
+  --radius-pill: 999px;
+}
+
+/* ---------------------------------------------------------------------------
+   Base — warm paper, soft type, oldstyle numerals.
+   --------------------------------------------------------------------------- */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-feature-settings: 'onum' 1, 'tnum' 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Fraunces optical-size + soft axes tuned for warm, vintage display type. */
+.font-display {
+  font-variation-settings: 'opsz' 120, 'SOFT' 40, 'WONK' 0;
+}
+
+/* Quiet warm scrollbar. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+/* Tabular oldstyle numerals for counts / catalog numbers when wanted. */
+.numerals-old {
+  font-feature-settings: 'onum' 1, 'tnum' 1;
+}
+
+/* ---------------------------------------------------------------------------
+   Paper grain overlay — fixed, full-page, non-interactive. Inline data-URI SVG
+   feTurbulence noise at ~0.06 opacity. Offline: no external assets. Faint, so
+   warm ink type stays crisp on the paper.
+   --------------------------------------------------------------------------- */
+.paper-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  opacity: 0.06;
+  mix-blend-mode: multiply;
+}
+
+/* ---------------------------------------------------------------------------
+   Motion — gentle by default; respect reduced motion. Disables the grain's
+   blend cost is negligible; reduced-motion only trims transitions/animations.
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

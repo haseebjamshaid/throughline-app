@@ -1,0 +1,25 @@
+# --- python ---
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# --- node / frontend ---
+node_modules/
+app/dist/
+app/.vite/
+
+# --- throughline derived cache: machine-specific, rebuildable, NEVER commit ---
+.throughline/
+
+# --- os / editor ---
+.DS_Store
+*.log
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# --- local working doc: session handoff (not committed) ---
+handoff.md

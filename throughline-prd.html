@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>throughline — product requirements v0.2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0d16;--bg2:#10111d;--panel:#161827;--ink:#e9e7f2;--ink-soft:#a4a1b8;--ink-faint:#6f6c85;
+    --lav:#b8a7ff;--lav-dim:#7d72b8;--gold:#e6b566;--gold-dim:#a8814a;--line:#262838;--line-soft:#1d1f2e;
+    --maxtext:880px;--maxwide:1000px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:
+      radial-gradient(1200px 700px at 80% -10%, #1a1733 0%, rgba(26,23,51,0) 60%),
+      radial-gradient(900px 600px at -10% 10%, #14202e 0%, rgba(20,32,46,0) 55%),
+      var(--bg);
+    color:var(--ink);font-family:"Newsreader",Georgia,serif;font-size:18px;line-height:1.62;
+    -webkit-font-smoothing:antialiased;padding:0 22px 120px;
+  }
+  .wrap{max-width:var(--maxtext);margin:0 auto}
+  .wide{max-width:var(--maxwide);margin-left:auto;margin-right:auto}
+  h1,h2,h3,.disp{font-family:"Space Grotesk",sans-serif;font-weight:600;letter-spacing:-.01em;line-height:1.12}
+  .mono{font-family:"JetBrains Mono",monospace}
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:500}
+  header{padding:96px 0 40px;border-bottom:1px solid var(--line)}
+  .kicker{font-family:"JetBrains Mono",monospace;font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--lav);margin-bottom:26px}
+  h1{font-size:clamp(44px,8vw,78px);font-weight:700;margin:0 0 18px}
+  h1 .dim{color:var(--lav-dim)}
+  .tagline{font-size:clamp(19px,2.6vw,23px);color:var(--ink-soft);max-width:660px;margin:0}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:34px}
+  .meta span{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.04em;color:var(--ink-soft);border:1px solid var(--line);border-radius:100px;padding:6px 13px}
+  .whatchanged{margin-top:26px;border:1px solid var(--gold-dim);background:linear-gradient(90deg,rgba(230,181,102,.08),rgba(230,181,102,0));border-radius:12px;padding:18px 20px}
+  .whatchanged .eyebrow{color:var(--gold);display:block;margin-bottom:8px}
+  .whatchanged p{margin:0;color:var(--ink-soft);font-size:16px}
+  nav.toc{margin:46px 0 10px;padding:26px 28px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#13141f,#101019)}
+  nav.toc .eyebrow{margin-bottom:16px;display:block}
+  nav.toc ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:2px 28px}
+  nav.toc li{display:flex;gap:12px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line-soft)}
+  nav.toc li a{color:var(--ink);text-decoration:none;font-family:"Space Grotesk",sans-serif;font-size:15.5px}
+  nav.toc li a:hover{color:var(--lav)}
+  nav.toc li .n{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--lav-dim);min-width:26px}
+  @media(max-width:680px){nav.toc ol{grid-template-columns:1fr}}
+  section{padding:64px 0 6px}
+  section.feat{border-top:1px solid var(--line);margin-top:18px}
+  section.heart{border-top:2px solid var(--lav-dim)}
+  h2{font-size:clamp(28px,4.4vw,40px);margin:0 0 8px}
+  .feat .h2row{display:flex;align-items:flex-start;gap:18px}
+  .feat .fnum{font-family:"JetBrains Mono",monospace;font-size:14px;color:var(--gold);border:1px solid var(--gold-dim);border-radius:8px;padding:8px 11px;margin-top:6px;flex:none}
+  .heart .fnum{color:var(--lav);border-color:var(--lav-dim)}
+  .lede{font-size:20px;color:var(--ink-soft);margin:14px 0 4px}
+  h3{font-size:21px;margin:38px 0 6px;color:var(--ink)}
+  p{margin:14px 0}
+  strong{color:#fff;font-weight:600}
+  em{color:var(--lav);font-style:italic}
+  .label{font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--lav);margin:30px 0 8px;display:flex;align-items:center;gap:12px}
+  .label::after{content:"";flex:1;height:1px;background:var(--line)}
+  ul.req,ol.req{margin:10px 0;padding:0;list-style:none}
+  ul.req li,ol.req li{position:relative;padding:9px 0 9px 30px;border-bottom:1px solid var(--line-soft);font-size:17px;line-height:1.55}
+  ul.req li::before{content:"—";position:absolute;left:0;color:var(--lav-dim);font-family:"JetBrains Mono",monospace}
+  ol.req{counter-reset:r}ol.req li{counter-increment:r}
+  ol.req li::before{content:counter(r);position:absolute;left:0;top:9px;color:var(--gold);font-family:"JetBrains Mono",monospace;font-size:13px}
+  .callout{border-left:2px solid var(--gold);background:linear-gradient(90deg,rgba(230,181,102,.07),rgba(230,181,102,0));padding:16px 20px;margin:26px 0;border-radius:0 10px 10px 0}
+  .callout.lav{border-left-color:var(--lav);background:linear-gradient(90deg,rgba(184,167,255,.09),rgba(184,167,255,0))}
+  .callout .eyebrow{color:var(--gold);margin-bottom:6px;display:block}
+  .callout.lav .eyebrow{color:var(--lav)}
+  .callout p{margin:4px 0;font-size:16.5px;color:var(--ink-soft)}
+  .scope{display:inline-flex;align-items:center;gap:7px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.06em;padding:5px 11px;border-radius:100px;margin-top:6px}
+  .scope.v1{color:#9fe6c0;border:1px solid #2c5a45;background:#13231c}
+  .scope.later{color:var(--gold);border:1px solid var(--gold-dim);background:#211a10}
+  .scope .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+  code.fm{display:block;white-space:pre;font-family:"JetBrains Mono",monospace;font-size:13px;line-height:1.6;color:var(--ink-soft);background:#0e1019;border:1px solid var(--line);border-left:2px solid var(--lav-dim);border-radius:8px;padding:16px 18px;margin:18px 0;overflow-x:auto}
+  code.fm .k{color:var(--gold)}code.fm .v{color:var(--lav)}code.fm .c{color:var(--ink-faint)}
+  .wf{margin:26px 0 8px;border:1px solid #2a2d42;border-radius:14px;
+    background:linear-gradient(#11131f,#0e1019),
+      repeating-linear-gradient(0deg,transparent 0 23px,rgba(184,167,255,.04) 23px 24px),
+      repeating-linear-gradient(90deg,transparent 0 23px,rgba(184,167,255,.04) 23px 24px);
+    padding:18px;font-family:"JetBrains Mono",monospace;box-shadow:0 30px 60px -30px rgba(0,0,0,.7)}
+  .wf-cap{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:2px 4px 16px;display:flex;justify-content:space-between;align-items:center}
+  .wf-cap .scr{color:var(--ink-faint)}
+  .frame{border:1px solid #34384f;border-radius:10px;overflow:hidden;background:#0d0f18}
+  .topbar{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid #262a3d;background:#11131f}
+  .dotrow{display:flex;gap:5px}.dotrow i{width:8px;height:8px;border-radius:50%;background:#2f3349;display:block}
+  .topbar .tt{font-size:11px;color:var(--ink-faint);margin-left:6px}
+  .shell{display:flex;min-height:200px}
+  .rail{width:124px;flex:none;border-right:1px solid #262a3d;padding:12px 10px;background:#0f1119;display:flex;flex-direction:column}
+  .rail .logo{font-family:"Space Grotesk";font-size:13px;color:var(--lav);margin-bottom:14px;font-weight:600}
+  .navi{font-size:11px;color:var(--ink-faint);padding:7px 8px;border-radius:6px;margin-bottom:3px;display:flex;align-items:center;gap:7px}
+  .navi.on{background:rgba(184,167,255,.12);color:var(--lav)}
+  .navi .ic{width:11px;height:11px;border:1px solid currentColor;border-radius:3px;flex:none;opacity:.8}
+  .body{flex:1;padding:14px}
+  .crumb{font-size:11px;color:var(--ink-faint);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+  .row{display:flex;gap:10px}.col{display:flex;flex-direction:column;gap:10px}.grow{flex:1}
+  .ln{height:8px;border-radius:4px;background:rgba(233,231,242,.13)}
+  .ln.t{height:11px;background:rgba(233,231,242,.22)}
+  .ln.w90{width:90%}.ln.w70{width:70%}.ln.w55{width:55%}.ln.w40{width:40%}.ln.w30{width:30%}.ln.w20{width:20%}
+  .img{border:1px dashed #3b3f59;border-radius:7px;background:linear-gradient(135deg,rgba(184,167,255,.05),rgba(230,181,102,.05));display:flex;align-items:center;justify-content:center;color:#4d516b;font-size:10px;position:relative;aspect-ratio:1/1}
+  .img::after{content:"";position:absolute;left:10px;right:10px;top:10px;bottom:10px;background:linear-gradient(135deg,transparent 47%,#2f3349 47% 53%,transparent 53%);opacity:.5}
+  .img span{position:relative;z-index:1}.img.wide{aspect-ratio:16/10}.img.tall{aspect-ratio:3/4}
+  .gridimg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .gridimg.g3{grid-template-columns:repeat(3,1fr)}.gridimg.g5{grid-template-columns:repeat(5,1fr)}
+  .pill{border:1px solid #3a3e57;border-radius:100px;padding:5px 10px;font-size:10px;color:var(--ink-soft);display:inline-flex;align-items:center;gap:6px}
+  .pill.lav{border-color:var(--lav-dim);color:var(--lav)}.pill.gold{border-color:var(--gold-dim);color:var(--gold)}
+  .pills{display:flex;flex-wrap:wrap;gap:6px}
+  .btn{border:1px solid var(--lav-dim);color:var(--lav);border-radius:8px;padding:7px 13px;font-size:11px;display:inline-flex;align-items:center;gap:7px;background:rgba(184,167,255,.06)}
+  .btn.ghost{border-color:#3a3e57;color:var(--ink-soft);background:none}
+  .btn.gold{border-color:var(--gold-dim);color:var(--gold);background:rgba(230,181,102,.08)}
+  .sw{display:flex;gap:6px}.sw i{width:26px;height:26px;border-radius:6px;display:block;border:1px solid rgba(255,255,255,.08)}
+  .card{border:1px solid #2a2e44;border-radius:9px;padding:12px;background:#0f1119}
+  .card.lit{border-color:var(--gold-dim);background:linear-gradient(180deg,rgba(230,181,102,.07),rgba(230,181,102,.02))}
+  .card.litlav{border-color:var(--lav-dim);background:linear-gradient(180deg,rgba(184,167,255,.08),rgba(184,167,255,.02))}
+  .meter{height:7px;border-radius:4px;background:#23263a;overflow:hidden;margin-top:6px}
+  .meter i{display:block;height:100%;background:linear-gradient(90deg,var(--lav),var(--gold))}
+  .tag-cap{font-size:9.5px;color:var(--ink-faint);letter-spacing:.08em;text-transform:uppercase;margin-bottom:5px}
+  .ann{font-size:10px;color:var(--gold);display:flex;gap:7px;align-items:flex-start;margin-top:9px;line-height:1.4}
+  .ann::before{content:"↳";color:var(--gold-dim)}
+  .search{border:1px solid #3a3e57;border-radius:9px;padding:10px 12px;color:var(--ink-faint);font-size:12px;display:flex;align-items:center;gap:9px}
+  .search .cur{color:var(--lav)}
+  .toggle{display:inline-flex;border:1px solid #34384f;border-radius:8px;overflow:hidden;font-size:10px}
+  .toggle b{padding:6px 12px;color:var(--ink-faint);font-weight:400}
+  .toggle b.on{background:rgba(184,167,255,.14);color:var(--lav)}
+  .drop{border:1.5px dashed #3b3f59;border-radius:10px;padding:22px;text-align:center;color:var(--ink-faint);font-size:11px;background:rgba(184,167,255,.03)}
+  .bubble{border-radius:10px;padding:11px 13px;font-size:11px;line-height:1.5;max-width:88%}
+  .bubble.me{background:rgba(184,167,255,.1);border:1px solid var(--lav-dim);color:var(--lav);margin-left:auto;border-bottom-right-radius:3px}
+  .bubble.it{background:#0f1119;border:1px solid #2a2e44;color:var(--ink-soft);border-bottom-left-radius:3px}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:14px;font-size:10.5px;color:var(--ink-faint)}
+  .legend span{display:flex;gap:6px;align-items:center}.legend b{width:20px;height:10px;border-radius:3px;display:inline-block}
+  .fnote{color:var(--ink-faint);font-size:14px;font-family:"JetBrains Mono",monospace;margin-top:10px}
+  footer{margin-top:90px;padding-top:40px;border-top:1px solid var(--line);color:var(--ink-faint);font-family:"JetBrains Mono",monospace;font-size:12.5px}
+  .gloss dt{font-family:"Space Grotesk";color:var(--lav);font-weight:600;font-size:16px;margin-top:18px}
+  .gloss dd{margin:4px 0 0;color:var(--ink-soft);font-size:16px}
+  .table{width:100%;border-collapse:collapse;margin-top:18px;font-size:15px}
+  .table th{text-align:left;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);padding:10px 12px;border-bottom:1px solid var(--line)}
+  .table td{padding:12px;border-bottom:1px solid var(--line-soft);vertical-align:top;color:var(--ink-soft)}
+  .table td:first-child{color:var(--ink);font-family:"Space Grotesk";font-size:14.5px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header>
+  <div class="kicker">product requirements · v0.2 · second brain + taste engine</div>
+  <h1>throughline<span class="dim">.</span></h1>
+  <p class="tagline">a second brain that holds who you are and what you love — and uses it to reflect your patterns, connect threads you'd miss, and show you a way through when you're stuck. fully yours, on top of your own vault.</p>
+  <div class="meta">
+    <span>for: joji / you</span>
+    <span>store: obsidian vault + private git</span>
+    <span>heart: the thread</span>
+    <span>tech: decided later</span>
+  </div>
+  <div class="whatchanged">
+    <span class="eyebrow">what changed since v0.1</span>
+    <p>It's no longer "an app that reads my images." Your <strong>Obsidian vault is the source of truth</strong> (movies, songs, books, quotes, images, plus your fears, ambitions and experiences), edited from either side and synced by git. The new <strong>heart is "the thread"</strong> — the unstuck engine. Vibe Search splits into <strong>inward</strong> (your vault) and <strong>outward</strong> (web discovery). Fit Check now works on more than images. One <strong>unified profile</strong> of you.</p>
+  </div>
+</header>
+
+<nav class="toc">
+  <span class="eyebrow">what's inside</span>
+  <ol>
+    <li><span class="n">00</span><a href="#what">the 30-second version</a></li>
+    <li><span class="n">01</span><a href="#belief">the two beliefs it's built on</a></li>
+    <li><span class="n">02</span><a href="#model">the questions you walk up and ask</a></li>
+    <li><span class="n">03</span><a href="#arch">how it's wired (vault + git)</a></li>
+    <li><span class="n">04</span><a href="#map">the whole app at a glance</a></li>
+    <li><span class="n">05</span><a href="#vault">feature: the vault &amp; intake</a></li>
+    <li><span class="n">06</span><a href="#profile">feature: your profile</a></li>
+    <li><span class="n">07</span><a href="#thread">feature: the thread (the heart)</a></li>
+    <li><span class="n">08</span><a href="#fit">feature: fit check</a></li>
+    <li><span class="n">09</span><a href="#search">feature: vibe search (in + out)</a></li>
+    <li><span class="n">10</span><a href="#firstrun">the first run</a></li>
+    <li><span class="n">11</span><a href="#rules">small but important rules</a></li>
+    <li><span class="n">12</span><a href="#scope">what's in v1 vs later</a></li>
+    <li><span class="n">13</span><a href="#gloss">plain-words glossary</a></li>
+  </ol>
+</nav>
+</div>
+
+<div class="wrap">
+<section id="what">
+  <div class="eyebrow">00 — the 30-second version</div>
+  <h2>What throughline is now</h2>
+  <p class="lede">You keep a vault of the things that make you <em>you</em> — films, music, books, quotes you live by, plus your own notes on what you're chasing and what you're scared of. throughline reads all of it and becomes the brain on top: it knows your taste, it sees your patterns, and when you're stuck it pulls a thread and shows you a way forward.</p>
+  <p>Four things you'll do with it:</p>
+  <ul class="req">
+    <li><strong>Know yourself, on paper.</strong> One living profile of your taste and your themes, drawn from your own vault.</li>
+    <li><strong>Get unstuck.</strong> Tell it "I'm stuck on X." It asks a sharp question, connects something from your own past, and hands you one concrete next step. <em>This is the heart.</em></li>
+    <li><strong>Check if something's you.</strong> An image, a caption, a song for a reel — drop it in and see how well it fits who you are.</li>
+    <li><strong>Find by feeling — in or out.</strong> Search your own vault by mood, or send your taste out into the web to discover new things you'd love.</li>
+  </ul>
+  <p>Your vault lives in Obsidian and syncs through your own private git repo, so it's with you on any machine and owned entirely by you. The sensitive stuff never leaves your laptop.</p>
+</section>
+</div>
+
+<div class="wrap">
+<section id="belief">
+  <div class="eyebrow">01 — the two beliefs it's built on</div>
+  <h2>Why it's shaped this way</h2>
+  <p>Two rules sit under every feature. If a feature ever breaks one of them, the feature is wrong, not the rule.</p>
+
+  <h3>1 — The app has no taste and no wisdom. You do.</h3>
+  <p>A small local model isn't a genius art director or a life coach, and throughline never pretends otherwise. What it's good at is <strong>memory</strong> and <strong>connection</strong>: it remembers what you've decided matters, and it spots links across hundreds of your own notes faster than you can. You supply the taste and the judgment; it makes them <em>repeatable</em> — written down, searchable, connected. That's the honest version of "taste is the moat."</p>
+
+  <h3>2 — It exists to get you moving, not to give you more to think about.</h3>
+  <p>This is the load-bearing one. A "surface my patterns / show me insights about myself" tool is dangerously easy to build into a machine for over-thinking — and that's the last thing you need more of. So the brain is built to <strong>end on an action.</strong> Reflections and connections are allowed, but only ever as fuel for a next move. The default exit from any "stuck" moment is a single, concrete, doable thing — never a prettier mirror.</p>
+
+  <div class="callout lav">
+    <span class="eyebrow">what these rules force</span>
+    <p>The app never edits your work for you and never overrides you — every claim it makes is editable and traceable. And the brain never leaves you holding pure analysis; if it can't point at a next step, it hasn't finished its job.</p>
+  </div>
+</section>
+</div>
+
+<div class="wrap">
+<section id="model">
+  <div class="eyebrow">02 — the questions you walk up and ask</div>
+  <h2>Four questions, one brain</h2>
+  <p>Same as before — don't picture menus, picture one person you can ask things. There are now four kinds of questions, and the fourth is the one that matters most.</p>
+  <ul class="req">
+    <li><strong>"What even am I?"</strong> → it reads your vault and writes your <em>Profile</em>.</li>
+    <li><strong>"Does this fit me?"</strong> → you show it something, it runs a <em>Fit Check</em>.</li>
+    <li><strong>"Find me something that feels like…"</strong> → a <em>Vibe Search</em>, inward (your vault) or outward (the web).</li>
+    <li><strong>"I'm stuck — show me a way through."</strong> → <em>the thread</em> pulls connections and hands you a next step.</li>
+  </ul>
+</section>
+</div>
+
+<div class="wrap">
+<section id="arch">
+  <div class="eyebrow">03 — how it's wired, in plain words</div>
+  <h2>Your vault is the truth; throughline is the brain on top</h2>
+  <p class="lede">The most important architecture decision: throughline doesn't own your data. Your <strong>Obsidian vault</strong> does. That means the app has to build far less — no storage, no clunky importer — and you keep everything in a form you can read and edit by hand forever.</p>
+
+  <div class="label">everything is a note</div>
+  <p>Each thing you love, or each thing about you, is one note. A little header (the "frontmatter") tells the app <em>what</em> it is; the body is the human part — <em>why</em> it matters to you. That "why" is what the app actually learns from.</p>
+  <code class="fm"><span class="c">--- a movie you love ---</span>
+<span class="k">type:</span> <span class="v">movie</span>
+<span class="k">title:</span> <span class="v">Blade Runner 2049</span>
+<span class="k">feeling:</span> <span class="v">loved</span>
+<span class="k">tags:</span> <span class="v">[nocturnal, lonely, neon]</span>
+<span class="c">---</span>
+the rain, the silence, the loneliness of K. beautiful and alone
+at the same time — the exact thing i keep chasing in my own work.</code>
+  <code class="fm"><span class="c">--- something about you ---</span>
+<span class="k">type:</span> <span class="v">ambition</span>
+<span class="k">title:</span> <span class="v">build a creative life i'm proud of</span>
+<span class="k">tags:</span> <span class="v">[bangkok, joji, freedom]</span>
+<span class="c">---</span>
+i want work that's mine and a life with room to breathe. the move
+is the unlock. i keep planning it and not starting it.</code>
+
+  <div class="label">two-way editing</div>
+  <p>You write notes <strong>in Obsidian</strong> (the nicer writing experience) <em>or</em> capture them quickly <strong>inside throughline</strong> — both write to the same files. Neither side is the "real" one; the vault is. throughline never holds a private copy you can't see.</p>
+
+  <div class="label">sync &amp; history = git</div>
+  <p>Your vault is a <strong>private git repo.</strong> That gives you three things for free: your data on any machine, a full version history of everything (git <em>is</em> the "version history" feature — no need to build one), and total ownership. The Obsidian Git plugin handles the commit/pull so you barely notice it.</p>
+
+  <div class="label">three honest gotchas (so they don't bite later)</div>
+  <ul class="req">
+    <li><strong>The app + the local model install per machine.</strong> Git syncs your <em>data</em> everywhere; the brain itself is a one-time setup on each laptop you use.</li>
+    <li><strong>Big image piles get heavy in git.</strong> Use git-LFS for image attachments, or keep large image folders outside the vault and just point notes at them. Text notes weigh nothing.</li>
+    <li><strong>The app's index doesn't go in git.</strong> The fingerprints/cache are big, machine-specific, and rebuildable — each machine builds its own from the vault. The vault is the truth; the index is just derived from it.</li>
+  </ul>
+</section>
+</div>
+
+<div class="wide">
+<section id="map">
+  <div class="wrap" style="max-width:880px;margin:0 auto;padding:0">
+    <div class="eyebrow">04 — the whole app at a glance</div>
+    <h2>How the pieces feed each other</h2>
+    <p class="lede">Everything flows from the vault. The Intake reads each note and image once, turning it into notes + a "fingerprint." Those power the four things you actually use — with the thread sitting at the center.</p>
+  </div>
+
+  <div class="wf" style="max-width:1000px;margin-left:auto;margin-right:auto">
+    <div class="wf-cap"><span>app map · data flow</span><span class="scr">vault → intake → four tools</span></div>
+    <svg viewBox="0 0 960 500" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="JetBrains Mono, monospace">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#7d72b8"/></marker>
+        <style>
+          .node{fill:#0f1119;stroke:#34384f}.node.key{stroke:#7d72b8}.node.heart{stroke:#b8a7ff;stroke-width:1.6}
+          .t{fill:#e9e7f2;font-size:14px;font-weight:600}.s{fill:#a4a1b8;font-size:10.5px}
+          .e{fill:#e6b566;font-size:9.5px;letter-spacing:.08em}.flow{stroke:#7d72b8;stroke-width:1.4;fill:none}
+        </style>
+      </defs>
+      <rect class="node key" x="330" y="16" width="300" height="64" rx="10"/>
+      <text class="t" x="352" y="42">🗄 your vault (obsidian + git)</text>
+      <text class="s" x="352" y="62">taste + self + images · the source of truth</text>
+      <rect class="node key" x="350" y="140" width="260" height="62" rx="10"/>
+      <text class="t" x="372" y="166">⚙ the intake</text>
+      <text class="s" x="372" y="185">reads notes + images → fingerprints</text>
+      <path class="flow" d="M480,80 L480,140" marker-end="url(#arr)"/>
+      <text class="e" x="492" y="115">reads once, in the background</text>
+      <rect class="node" x="22" y="290" width="216" height="74" rx="10"/>
+      <text class="t" x="40" y="316">🗂 profile</text><text class="s" x="40" y="334">your taste + themes,</text><text class="s" x="40" y="348">written down</text>
+      <rect class="node" x="256" y="290" width="200" height="74" rx="10"/>
+      <text class="t" x="274" y="316">✓ fit check</text><text class="s" x="274" y="334">"is this me?" —</text><text class="s" x="274" y="348">image, caption, song</text>
+      <rect class="node" x="474" y="290" width="216" height="74" rx="10"/>
+      <text class="t" x="492" y="316">🔍 vibe search</text><text class="s" x="492" y="334">inward (vault) +</text><text class="s" x="492" y="348">outward (web)</text>
+      <rect class="node heart" x="708" y="282" width="230" height="90" rx="12"/>
+      <text class="t" x="728" y="308" fill="#b8a7ff">🧵 the thread</text><text class="s" x="728" y="328">"i'm stuck" → a sharp</text>
+      <text class="s" x="728" y="343">question + a connection</text><text class="s" x="728" y="358">+ one next step</text>
+      <path class="flow" d="M420,202 C260,235 180,255 150,290" marker-end="url(#arr)"/>
+      <path class="flow" d="M460,202 C400,240 370,260 356,290" marker-end="url(#arr)"/>
+      <path class="flow" d="M510,202 C560,240 580,258 582,290" marker-end="url(#arr)"/>
+      <path class="flow" d="M560,200 C720,230 790,250 815,282" marker-end="url(#arr)"/>
+      <path class="flow" d="M238,338 L256,338" marker-end="url(#arr)" stroke-dasharray="4 4"/>
+      <text class="e" x="60" y="392">profile is the ruler fit check &amp; the thread both use</text>
+      <path class="flow" d="M690,338 L708,338" marker-end="url(#arr)" stroke-dasharray="4 4"/>
+      <text class="e" x="470" y="460">the thread can call search &amp; profile to find the right connection</text>
+      <path class="flow" d="M690,360 C600,420 540,430 540,448" marker-end="url(#arr)" stroke-dasharray="4 4"/>
+    </svg>
+  </div>
+  <div class="wrap" style="max-width:880px;margin:0 auto;padding:0">
+    <p class="fnote">solid arrows = "produces / feeds". dashed = "uses". the thread sits downstream of everything because it draws on all of it.</p>
+  </div>
+</section>
+</div>
+
+<div class="wrap">
+<section id="vault" class="feat">
+  <div class="h2row"><span class="fnum">05</span><div>
+    <div class="eyebrow">feature · the foundation</div>
+    <h2>The Vault &amp; Intake</h2>
+  </div></div>
+  <p class="lede">The vault is your shelf of everything; the intake is the quiet worker that reads it. Together they replace the old "library + eyes pass" — now reading words as well as images.</p>
+
+  <div class="label">what kinds of things live here</div>
+  <ul class="req">
+    <li><strong>Taste:</strong> movies, songs, books, quotes — things you love, each with a line on <em>why</em>.</li>
+    <li><strong>Self:</strong> ambitions, fears, experiences, plain journal notes — who you are and where you're headed.</li>
+    <li><strong>Images:</strong> stills, references, your own frames — attachments in the vault.</li>
+    <li>You can add more types whenever; the app reads the <span class="mono" style="color:var(--lav)">type</span> and adapts.</li>
+  </ul>
+
+  <div class="label">how things get in (both ways)</div>
+  <ol class="req">
+    <li><strong>In Obsidian:</strong> write a note however you like. throughline picks it up.</li>
+    <li><strong>In throughline — quick capture:</strong> a fast "add something" box. Paste a film title, a lyric, a thought; pick a type; it writes a clean note into the vault for you. For images, drag them in.</li>
+    <li>Either way it lands as a real file you own, readable forever, in or out of the app.</li>
+  </ol>
+
+  <div class="label">what the intake records for each thing</div>
+  <ul class="req">
+    <li><strong>For an image:</strong> a plain description, dominant colors (swatch + hex), light, mood words, framing.</li>
+    <li><strong>For a note:</strong> the themes and feelings in it, and how it connects to your other notes.</li>
+    <li><strong>For everything:</strong> a <em>fingerprint</em> — the hidden number-string that lets the app compare two things by feel. This is what makes search and connections work.</li>
+  </ul>
+
+  <div class="label">details that matter</div>
+  <ul class="req">
+    <li>Reading runs quietly in the background; a small counter shows progress. Big vaults don't freeze the app, and you can pause it if the laptop's warm.</li>
+    <li>It reads once and remembers — never re-reads on every open.</li>
+    <li><strong>You can correct anything</strong> it tagged, and your correction sticks; the app never silently overwrites your edits.</li>
+    <li>If it can't read something confidently (a blurry image, a one-word note), it says so instead of inventing.</li>
+  </ul>
+
+  <div class="wf">
+    <div class="wf-cap"><span>screen · vault</span><span class="scr">notes + images, both editable</span></div>
+    <div class="frame">
+      <div class="topbar"><div class="dotrow"><i></i><i></i><i></i></div><span class="tt">vault · 312 things · synced</span></div>
+      <div class="shell">
+        <div class="rail">
+          <div class="logo">throughline</div>
+          <div class="navi on"><span class="ic"></span>vault</div>
+          <div class="navi"><span class="ic"></span>profile</div>
+          <div class="navi"><span class="ic"></span>the thread</div>
+          <div class="navi"><span class="ic"></span>fit check</div>
+          <div class="navi"><span class="ic"></span>vibe search</div>
+          <div class="navi" style="margin-top:auto"><span class="ic"></span>+ capture</div>
+        </div>
+        <div class="body">
+          <div class="crumb"><span>vault</span><span class="pills"><span class="pill lav">● offline</span><span class="pill">reading 8 of 22 ▸</span></span></div>
+          <div class="pills" style="margin-bottom:12px">
+            <span class="pill lav">all</span><span class="pill">🎬 movies</span><span class="pill">🎵 songs</span><span class="pill">📖 books</span><span class="pill">❝ quotes</span><span class="pill">◷ self</span><span class="pill">🖼 images</span>
+          </div>
+          <div class="row">
+            <div class="grow col">
+              <div class="card"><div class="row" style="justify-content:space-between"><span style="color:var(--lav);font-size:11px">🎬 Blade Runner 2049</span><span style="font-size:9px;color:var(--ink-faint)">loved</span></div><div class="ln w90" style="margin:7px 0 5px"></div><div class="ln w55"></div></div>
+              <div class="card"><div class="row" style="justify-content:space-between"><span style="color:var(--gold);font-size:11px">◷ ambition · the move</span><span style="font-size:9px;color:var(--ink-faint)">self · private</span></div><div class="ln w70" style="margin:7px 0 5px"></div><div class="ln w40"></div></div>
+              <div class="card"><div class="row" style="justify-content:space-between"><span style="color:var(--lav);font-size:11px">❝ a quote you live by</span></div><div class="ln w55" style="margin-top:7px"></div></div>
+              <div class="gridimg g5" style="margin-top:2px"><div class="img"><span></span></div><div class="img"><span></span></div><div class="img"><span></span></div><div class="img"><span></span></div><div class="img"><span></span></div></div>
+            </div>
+            <div class="card" style="width:150px;flex:none"><div class="tag-cap">quick capture</div>
+              <div class="drop" style="padding:14px">paste a film,<br>lyric, or thought</div>
+              <div class="pills" style="margin-top:8px"><span class="pill">type ▾</span></div>
+              <div class="ann">writes a real note into your vault</div>
+            </div>
+          </div>
+          <div class="ann">"self" notes carry a private mark — they never feed outward discovery</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="wrap">
+<section id="profile" class="feat">
+  <div class="h2row"><span class="fnum">06</span><div>
+    <div class="eyebrow">feature · know thyself</div>
+    <h2>Your Profile</h2>
+  </div></div>
+  <p class="lede">One unified picture of you, drawn from your vault: your taste <em>and</em> your themes, because the good connections only happen when it's all one fabric. The creative-taste part is still clearly its own section so you can read it alone.</p>
+
+  <div class="label">what's in it</div>
+  <ul class="req">
+    <li><strong>The creative slice</strong> (readable on its own): palette, mood, light signature, framing/shot grammar, recurring subjects, do's &amp; don'ts.</li>
+    <li><strong>The deeper slice:</strong> your recurring themes ("solitude as a thing you're drawn to, not just afraid of"), your stated ambitions, and the threads that keep reappearing across films, music, and your own notes.</li>
+    <li><strong>A name</strong> you give it ("midnight joji").</li>
+  </ul>
+
+  <div class="label">how each claim earns its place</div>
+  <ol class="req">
+    <li><strong>Backed by examples.</strong> Every line says "because of these things" and links straight to them. No mystery pronouncements about who you are.</li>
+    <li><strong>Honest confidence.</strong> Each section says how much it's based on, so you know what to trust and what to feed.</li>
+    <li><strong>Written back to your vault</strong> as a note — so it's versioned by git and portable like everything else.</li>
+  </ol>
+
+  <div class="label">what you can do</div>
+  <ul class="req">
+    <li>Generate / regenerate it from the current vault. It drafts; you decide.</li>
+    <li>Edit any line in plain words, <strong>pin</strong> lines so regenerating won't touch them, add your own, delete what's wrong.</li>
+    <li>Roll back to an earlier version (it's just git history).</li>
+    <li>Export the creative slice as your portable joji brand book. <span class="scope later"><span class="dot"></span>export polish is later</span></li>
+  </ul>
+
+  <div class="wf">
+    <div class="wf-cap"><span>screen · profile</span><span class="scr">taste + self, one fabric</span></div>
+    <div class="frame">
+      <div class="topbar"><div class="dotrow"><i></i><i></i><i></i></div><span class="tt">profile · midnight joji · v4</span></div>
+      <div class="shell">
+        <div class="rail">
+          <div class="logo">throughline</div>
+          <div class="navi"><span class="ic"></span>vault</div>
+          <div class="navi on"><span class="ic"></span>profile</div>
+          <div class="navi"><span class="ic"></span>the thread</div>
+          <div class="navi"><span class="ic"></span>fit check</div>
+          <div class="navi"><span class="ic"></span>vibe search</div>
+        </div>
+        <div class="body">
+          <div class="crumb"><span>midnight joji <span style="color:var(--ink-faint)">· v4 · history ▾</span></span><span class="pills"><span class="btn ghost">export slice</span><span class="btn">regenerate</span></span></div>
+          <div class="toggle" style="margin-bottom:10px"><b class="on">creative slice</b><b>deeper threads</b></div>
+          <div class="row">
+            <div class="card grow"><div class="tag-cap">palette · you reach for</div>
+              <div class="sw" style="margin-bottom:8px"><i style="background:#0e1330"></i><i style="background:#2b2350"></i><i style="background:#b8a7ff"></i><i style="background:#e6b566"></i><i style="background:#c25b3a"></i></div>
+              <div class="tag-cap">mood</div><div class="pills"><span class="pill lav">lonely</span><span class="pill lav">cozy</span><span class="pill lav">cinematic 📌</span></div>
+            </div>
+            <div class="card grow"><div class="tag-cap">recurring threads</div>
+              <div class="ln w90" style="margin:6px 0"></div><div class="ln w70" style="margin-bottom:6px"></div><div class="ln w55"></div>
+              <div class="ann">"solitude shows up across 14 films, 9 songs &amp; your own notes"</div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:10px"><div class="tag-cap">your stated ambitions <span style="color:var(--ink-faint)">· editable</span></div>
+            <div class="pills"><span class="pill gold">a creative life that's mine</span><span class="pill gold">room to breathe</span></div>
+            <div class="ann" style="color:var(--ink-faint)">confidence: high · backed by your own notes</div>
+          </div>
+          <div class="ann">📌 pinned · 🔒 deeper threads stay local, never go outward</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="wrap">
+<section id="thread" class="feat heart">
+  <div class="h2row"><span class="fnum">07</span><div>
+    <div class="eyebrow" style="color:var(--lav)">feature · the heart</div>
+    <h2>the thread</h2>
+  </div></div>
+  <p class="lede">The reason the whole thing exists. When you're stuck, flat, or circling — you come here, say what's going on, and it pulls a thread: a sharp question, a connection from your own life you'd forgotten, and <strong>one concrete next step.</strong> It always ends on a move.</p>
+
+  <div class="label">the core flow, step by step</div>
+  <ol class="req">
+    <li>You type the stuck thing in plain words — "can't decide which reel to make next," "no motivation to start the thing," "feel flat about all of it."</li>
+    <li>It <strong>asks one sharp question back</strong> first — not ten. The kind that actually unsticks your own head ("what's the version of this you'd be embarrassed to admit you want?").</li>
+    <li>It <strong>surfaces a connection</strong> from your vault — something you already said, loved, or lived that's relevant. ("Three months ago you wrote almost this exact sentence. The thing that broke it then was starting small.")</li>
+    <li>It hands you <strong>one next step</strong> — small, specific, doable today. Highlighted, unmissable. Not a plan, not five options. One move.</li>
+    <li>You can ask for a different step, a smaller step, or say "did it" — and it remembers the momentum.</li>
+  </ol>
+
+  <div class="label">the ambient side (quiet, low-frequency)</div>
+  <ul class="req">
+    <li>Now and then — not constantly — it surfaces a thread it noticed: "you keep returning to X across your notes; want to pull on it?" You can open it or dismiss it.</li>
+    <li><strong>No notification machine.</strong> No streaks, no nagging, no badges. It earns attention by being useful, not by interrupting. You set how often (default: rarely).</li>
+  </ul>
+
+  <div class="label">the rules that keep it healthy, not harmful</div>
+  <ul class="req">
+    <li><strong>It always ends on an action.</strong> If it can't get to a concrete next step, it hasn't finished. Pure insight with no move is a failure state, by design.</li>
+    <li><strong>It points at your own life, not platitudes.</strong> Every nudge is grounded in something <em>you</em> put in the vault — your taste, your past, your words.</li>
+    <li><strong>It's a tool, not a friend.</strong> It won't pretend to be a relationship or a therapist, and it'll gently point you toward real people or real help when something's beyond a creative block. It's honest about being a small model with a good memory.</li>
+    <li><strong>You can always close the loop.</strong> "Did it" is one tap, and that's the satisfying end — momentum logged, thread done.</li>
+  </ul>
+
+  <div class="callout lav">
+    <span class="eyebrow">why this shape, specifically for you</span>
+    <p>You think in circles when given options and move when given a question and a decision. So the thread is built to do exactly that: subtract choices, ask the right question, make one call. It's the opposite of a tool that hands you more to analyze.</p>
+  </div>
+
+  <div class="wf">
+    <div class="wf-cap"><span>screen · the thread</span><span class="scr">stuck → question → connection → one move</span></div>
+    <div class="frame">
+      <div class="topbar"><div class="dotrow"><i></i><i></i><i></i></div><span class="tt">the thread</span></div>
+      <div class="shell">
+        <div class="rail">
+          <div class="logo">throughline</div>
+          <div class="navi"><span class="ic"></span>vault</div>
+          <div class="navi"><span class="ic"></span>profile</div>
+          <div class="navi on"><span class="ic"></span>the thread</div>
+          <div class="navi"><span class="ic"></span>fit check</div>
+          <div class="navi"><span class="ic"></span>vibe search</div>
+        </div>
+        <div class="body">
+          <div class="crumb"><span>a way through</span><span class="pill">nudges: rarely ▾</span></div>
+          <div class="col" style="gap:9px">
+            <div class="bubble me">i keep planning the next reel and never starting. flat about it.</div>
+            <div class="bubble it"><b style="color:var(--lav)">one question:</b> what would you make this week if no one was going to see it?</div>
+            <div class="bubble it"><b style="color:var(--gold)">a thread i found:</b> in march you wrote "i move when i start small." your two best pieces both began as throwaway tests.</div>
+            <div class="card lit" style="max-width:88%"><div class="tag-cap" style="color:var(--gold)">your one next step · today</div>
+              <div style="color:var(--ink);font-size:12px;line-height:1.5">shoot 30 seconds of the rainy-window shot tonight. no script, no edit. just the test.</div>
+              <div class="pills" style="margin-top:9px"><span class="btn gold">did it ✓</span><span class="btn ghost">smaller</span><span class="btn ghost">different step</span></div>
+            </div>
+          </div>
+          <div class="ann">it never ends on "here's what's going on with you" — it ends on a move you can do today</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="wrap">
+<section id="fit" class="feat">
+  <div class="h2row"><span class="fnum">08</span><div>
+    <div class="eyebrow">feature · "is this me?"</div>
+    <h2>Fit Check</h2>
+  </div></div>
+  <p class="lede">A second pair of eyes on tap — now for more than images. Drop in a thumbnail, a caption draft, or a song you're eyeing for a reel, and get a straight read: how "you" is this, and exactly what's pulling it off — measured against your profile, never against generic "good."</p>
+
+  <div class="label">what it works on</div>
+  <ul class="req">
+    <li><strong>Images</strong> — a thumbnail, a frame, a reference. (palette / light / framing checks)</li>
+    <li><strong>Words</strong> — a caption, a title, a line. ("does this sound like me?")</li>
+    <li><strong>A song / track</strong> — by how its feel matches your taste. <span class="scope later"><span class="dot"></span>audio feel is later; words about it work now</span></li>
+  </ul>
+
+  <div class="label">what you get back</div>
+  <ul class="req">
+    <li><strong>A fit score</strong> — one "how you is this" number, 0–100%, readable at a glance. (It's a distance measurement: how far this sits from the center of your taste.)</li>
+    <li><strong>A one-line verdict</strong> — "strongly you, one thing to fix" / "drifts off."</li>
+    <li><strong>A checklist tied to your profile</strong> — each profile line becomes a check, and each note names the rule it's checking. Never vague.</li>
+    <li><strong>Concrete fixes</strong> — "warm the white balance," "this caption's too polished — you're looser than this."</li>
+    <li><strong>Side-by-side</strong> — your thing next to the closest matches from your vault.</li>
+  </ul>
+
+  <div class="label">what you can do</div>
+  <ol class="req">
+    <li>Check one thing deeply, or drop a batch to get them <strong>ranked by fit</strong> (pick the most-you option of ten).</li>
+    <li><strong>Disagree</strong> with any note — "I meant that" — and it stops flagging it and remembers your intent. This quietly tunes your profile over time.</li>
+    <li>Send anything checked into the vault, or into the thread if it sparked something.</li>
+  </ol>
+
+  <div class="label">the hard line</div>
+  <p>It scores against <em>you</em>, never against generic taste, and it <strong>never edits the thing for you.</strong> Off-profile on purpose is a valid choice and it treats it as one — it'll tell you you've drifted, not that you're wrong.</p>
+
+  <div class="wf">
+    <div class="wf-cap"><span>screen · fit check</span><span class="scr">now: image · caption · song</span></div>
+    <div class="frame">
+      <div class="topbar"><div class="dotrow"><i></i><i></i><i></i></div><span class="tt">fit check</span></div>
+      <div class="body" style="padding:16px">
+        <div class="crumb"><span>checking against: <span style="color:var(--lav)">midnight joji ▾</span></span><span class="toggle"><b class="on">image</b><b>caption</b><b>song</b></span></div>
+        <div class="row">
+          <div style="width:180px;flex:none"><div class="img tall"><span>your new shot</span></div></div>
+          <div class="grow col" style="gap:11px">
+            <div class="card"><div class="row" style="align-items:center;gap:14px"><div style="font-family:'Space Grotesk';font-size:30px;font-weight:700;color:var(--lav)">82%</div>
+              <div class="grow"><div class="tag-cap">how "you" this is</div><div class="meter"><i style="width:82%"></i></div><div class="ann" style="color:var(--ink-soft)">strongly you — one thing to fix</div></div></div></div>
+            <div class="card"><div class="tag-cap">checklist · tied to your profile</div>
+              <div class="ann" style="color:#9fe6c0">✓ palette — right in your range</div>
+              <div class="ann" style="color:#9fe6c0">✓ mood — reads lonely/cozy</div>
+              <div class="ann" style="color:#e88">✗ light — brighter than your usual; warm it down</div>
+            </div>
+            <div class="card"><div class="tag-cap">closest from your vault</div><div class="gridimg g3"><div class="img"><span></span></div><div class="img"><span></span></div><div class="img"><span></span></div></div></div>
+          </div>
+        </div>
+        <div class="ann">disagree? tap a line → "i meant that" → it learns you</div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="wrap">
+<section id="search" class="feat">
+  <div class="h2row"><span class="fnum">09</span><div>
+    <div class="eyebrow">feature · find by feeling</div>
+    <h2>Vibe Search — two modes</h2>
+  </div></div>
+  <p class="lede">One search bar, two directions. Look <em>inward</em> to find things already in your vault by feeling, or send your taste <em>outward</em> to discover new things you'd love. A clear toggle, and a clear wall between them.</p>
+
+  <div class="label">inward — "what in my vault feels like this?"</div>
+  <ul class="req">
+    <li><strong>A real ranking algorithm, not keyword matching.</strong> You type a feeling; it turns that into a fingerprint and ranks your vault by closeness of feel. "rainy, neon, alone" finds the right things even if nothing's named that.</li>
+    <li><strong>Search by example too</strong> — drop an image or point at a note and get "more like this."</li>
+    <li><strong>Explainable</strong> — each result shows <em>why</em> it surfaced ("matched on: warm light + solitary figure").</li>
+    <li><strong>Tunable</strong> — weight it ("more by mood, less by color") and filter by type (films only, quotes only, my-work only).</li>
+    <li>Local, private, instant. This is the everyday mode.</li>
+  </ul>
+
+  <div class="label">outward — "what's out there that fits me?"</div>
+  <ul class="req">
+    <li>Takes your <strong>taste corpus</strong> and searches the live web for new films, albums, books you don't know yet that match it.</li>
+    <li>A recommender grounded in <em>your actual taste</em> instead of an engagement algorithm — the most portfolio-impressive part of the app.</li>
+    <li><strong>Explainable</strong> — "suggested because it shares the nocturnal-loneliness thread you love."</li>
+    <li>One-tap to save a discovery straight into your vault as a new note.</li>
+    <li><span class="scope later"><span class="dot"></span>outward is the v2 headliner; inward ships first</span></li>
+  </ul>
+
+  <div class="callout">
+    <span class="eyebrow">the wall, said plainly</span>
+    <p>Outward is the <strong>only</strong> place anything leaves your machine — your query plus a short summary of your <em>taste</em>. Your <strong>self</strong> material (fears, ambitions, journal) is never part of an outward query, ever. Inward never touches the web at all. You're always told which mode you're in.</p>
+  </div>
+
+  <div class="wf">
+    <div class="wf-cap"><span>screen · vibe search</span><span class="scr">inward vs outward</span></div>
+    <div class="frame">
+      <div class="topbar"><div class="dotrow"><i></i><i></i><i></i></div><span class="tt">vibe search</span></div>
+      <div class="body" style="padding:16px">
+        <div class="row" style="align-items:center;margin-bottom:10px"><div class="toggle"><b class="on">🔒 inward (my vault)</b><b>🌐 outward (web)</b></div><span class="ann" style="margin:0 0 0 auto;color:var(--ink-faint)">searching your own vault — nothing leaves</span></div>
+        <div class="search" style="margin-bottom:10px">🔍 rainy, neon, someone alone<span class="cur">▏</span></div>
+        <div class="crumb"><span>34 matches, closest first</span><span class="pills"><span class="pill">films</span><span class="pill">images</span><span class="pill gold">⚙ weight: mood↑</span></span></div>
+        <div class="gridimg g5">
+          <div class="img"><span>98%</span></div><div class="img"><span>95%</span></div><div class="img"><span>91%</span></div><div class="img"><span>88%</span></div><div class="img"><span>84%</span></div>
+        </div>
+        <div class="card" style="margin-top:10px"><div class="tag-cap">↗ switch to outward and the same feeling becomes</div>
+          <div class="ann" style="color:var(--lav)">"3 films you haven't seen that share this exact thread — saved straight to your vault"</div>
+        </div>
+        <div class="ann">every result — in or out — shows <em style="font-style:normal;color:var(--gold)">why</em> it matched</div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="wrap">
+<section id="firstrun" class="feat">
+  <div class="h2row"><span class="fnum">10</span><div>
+    <div class="eyebrow">the first ten minutes</div>
+    <h2>The First Run</h2>
+  </div></div>
+  <p class="lede">The first run's only job is to get you from "empty" to your first profile <em>and</em> your first thread — the two moments that make it click — as fast as possible.</p>
+  <ol class="req">
+    <li><strong>Point it at your vault</strong> — pick an existing Obsidian vault, or let it create one for you, wired to your private git repo. Privacy line up front: the sensitive stuff never leaves this machine.</li>
+    <li><strong>Seed it.</strong> If the vault's empty, a gentle prompt to add a first handful — a few films, a few songs, one honest note about what you're chasing. Quick capture makes this painless.</li>
+    <li><strong>Watch it read.</strong> A friendly progress moment in human terms ("reading your films, your notes, the feel of each…"), not a blank spinner.</li>
+    <li><strong>The reveal.</strong> Your first Profile. The "oh — that's me" moment, all backed by your own things.</li>
+    <li><strong>First thread.</strong> It gently offers one starter: "want to pull on a thread?" — so you feel the heart of the app on day one, ending on a tiny first move.</li>
+  </ol>
+  <p>If you only added a few things, it still works — and it's honest: "thin first read; feed it more and it sharpens."</p>
+
+  <div class="wf">
+    <div class="wf-cap"><span>screen · first run</span><span class="scr">vault → profile → first thread</span></div>
+    <div class="frame">
+      <div class="topbar"><div class="dotrow"><i></i><i></i><i></i></div><span class="tt">welcome to throughline</span></div>
+      <div class="body" style="padding:20px">
+        <div class="row" style="gap:12px">
+          <div class="card grow"><div class="tag-cap">step 1 · your vault</div>
+            <div class="drop" style="margin-top:8px">pick your obsidian vault<br><span style="color:var(--lav)">or create one + git</span></div></div>
+          <div class="col" style="width:24px;align-items:center;justify-content:center;color:var(--lav-dim)">→</div>
+          <div class="card grow"><div class="tag-cap">step 2 · it reads</div>
+            <div class="ln w90" style="margin:8px 0 6px"></div><div class="meter"><i style="width:60%"></i></div>
+            <div class="ann" style="color:var(--ink-soft)">reading films, notes &amp; feel — 18 of 30</div></div>
+          <div class="col" style="width:24px;align-items:center;justify-content:center;color:var(--lav-dim)">→</div>
+          <div class="card grow litlav"><div class="tag-cap" style="color:var(--lav)">step 3 · reveal + first thread</div>
+            <div class="sw" style="margin:8px 0"><i style="background:#0e1330"></i><i style="background:#b8a7ff"></i><i style="background:#e6b566"></i></div>
+            <div class="ann" style="color:var(--gold)">"that's me." → "want to pull a thread?"</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="wrap">
+<section id="rules" class="feat">
+  <div class="h2row"><span class="fnum">11</span><div>
+    <div class="eyebrow">cross-cutting</div>
+    <h2>Small but important rules</h2>
+  </div></div>
+
+  <h3>The vault is the truth — the app is disposable</h3>
+  <p>Everything real lives in your vault as files you own. If throughline vanished tomorrow, your whole second brain would still be there, readable in plain Obsidian. The app is a brain you bolt on, never a cage your data lives in.</p>
+
+  <h3>The privacy wall is sacred</h3>
+  <p>Your self material — fears, ambitions, journal, experiences — is inward-only and never part of any web query. There's a clear, always-visible sign of which mode you're in. Privacy isn't a setting buried in a menu; it's the default and it's visible.</p>
+
+  <h3>It points at action, always</h3>
+  <p>The thread ends on a move. Fit Check ends on a fix. Search ends on a result you can use. Nothing in the app is allowed to leave you holding pure analysis — that's the one thing the whole product is designed against.</p>
+
+  <h3>You correct it; it remembers</h3>
+  <p>Every tag, profile line, fit note, and connection is editable, and your call sticks. It's a junior with a great memory: fast, tireless, sometimes wrong, never offended.</p>
+
+  <h3>What the "fingerprint" actually is</h3>
+  <p>When the app reads anything — image or note — it turns the feel into a long string of numbers. Similar feelings get similar numbers. That's the whole trick behind search, "more like this," and the connections the thread finds. You never see it; it just makes the magic parts work.</p>
+
+  <h3>Honest about being small</h3>
+  <p>Low-confidence reads, thin profile sections, empty searches, and moments beyond its depth — it says so plainly, and for anything heavier than a creative block it points you toward real people or real help. It would rather admit a gap than bluff.</p>
+
+  <h3>Empty screens are invitations</h3>
+  <p>Every screen tells you what to do to fill it. An empty thread says "what's on your mind?" An empty search says "try a feeling, like 'warm and lonely.'"</p>
+</section>
+</div>
+
+<div class="wrap">
+<section id="scope" class="feat">
+  <div class="h2row"><span class="fnum">12</span><div>
+    <div class="eyebrow">drawing the line</div>
+    <h2>What's in v1 vs later</h2>
+  </div></div>
+  <p class="lede">v1 has to deliver the heart — the thread — plus the minimum that makes it work: the vault, the profile, inward search. Fit Check rides along. The flashy outward discovery and the rest come right after, once you're opening this every day. The risk here isn't a small v1; it's a beautiful v-never. Ship the heart first.</p>
+  <table class="table">
+    <thead><tr><th>capability</th><th>v1 — build first</th><th>later</th></tr></thead>
+    <tbody>
+      <tr><td>Vault + intake</td><td>connect obsidian, read notes + images, fingerprints, two-way capture, corrections</td><td>git-LFS niceties, watch-folder, video frames</td></tr>
+      <tr><td>Profile</td><td>unified taste + threads, examples, confidence, edit/pin, written back to vault (git history)</td><td>polished brand-book export, multiple profiles</td></tr>
+      <tr><td><strong>The thread</strong></td><td><strong>on-demand "I'm stuck" → question + connection + one next step; "did it" loop</strong></td><td>ambient nudges, momentum tracking over time</td></tr>
+      <tr><td>Fit check</td><td>images + captions, score, profile checklist, fixes, batch rank, disagree loop</td><td>audio/song feel</td></tr>
+      <tr><td>Vibe search</td><td>inward: semantic, explainable, tunable, by-example</td><td>outward web discovery (the v2 headliner)</td></tr>
+      <tr><td>Boards</td><td>—</td><td>project workspaces (reuse v1's parts)</td></tr>
+    </tbody>
+  </table>
+</section>
+</div>
+
+<div class="wrap">
+<section id="gloss" class="feat">
+  <div class="h2row"><span class="fnum">13</span><div>
+    <div class="eyebrow">no jargon left behind</div>
+    <h2>Plain-words glossary</h2>
+  </div></div>
+  <dl class="gloss">
+    <dt>vault</dt><dd>your Obsidian folder of everything — taste, self, images. the source of truth, synced by git, owned by you.</dd>
+    <dt>entry / note</dt><dd>one thing in the vault: a film, a song, a quote, an ambition, an image. has a type and a "why."</dd>
+    <dt>the intake</dt><dd>the one-time reading the app does to each entry — colors, mood, themes, connections, fingerprint.</dd>
+    <dt>profile</dt><dd>one unified picture of you: taste + recurring threads. the ruler fit check and the thread both use.</dd>
+    <dt>the thread</dt><dd>the heart. you say you're stuck; it returns a question, a connection from your own life, and one next step. always ends on a move.</dd>
+    <dt>fit check</dt><dd>"how me is this?" for an image, caption, or song — scored against your profile, never generic "good."</dd>
+    <dt>vibe search · inward</dt><dd>find things in your vault by feeling. local, private, explainable.</dd>
+    <dt>vibe search · outward</dt><dd>send your taste to the web to discover new things. taste-only; self stuff never goes out.</dd>
+    <dt>fingerprint</dt><dd>a hidden number-string capturing the feel of a thing, so the app can compare anything by mood. you never see it.</dd>
+    <dt>the wall</dt><dd>the hard rule that your self material stays on your machine and never enters a web query.</dd>
+  </dl>
+</section>
+
+<footer>
+  throughline · product requirements v0.2 — second brain + taste engine.<br>
+  next: with the heart settled, we sketch the v1 build order around the thread — and only then talk tech.
+</footer>
+</div>
+
+</body>
+</html>
