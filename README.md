@@ -6,6 +6,12 @@ _Proprietary software — © 2026 Haseeb Jamshaid. All rights reserved. Not for 
 
 throughline reads your Obsidian vault, understands what's in it (themes, feelings, connections in your notes; colors, mood, framing in your images), and builds an explainable, searchable map of your taste. Everything runs on your machine via [Ollama](https://ollama.com) and local models — there are no API keys, no accounts, and nothing leaves your laptop.
 
+## What "throughline" means
+
+The name comes from screenwriting. A story's **throughline** (Stanislavski's *through-line of action*, also called the *spine*) is the single connecting thread that runs beneath every scene — the core intention that ties otherwise-separate moments into one coherent whole. Without it, a script is just disconnected scenes; with it, everything pulls in the same direction.
+
+That's the idea here. Your notes, films, songs, books, and half-formed thoughts are the scenes; throughline reads across them to find the thread running through it all — and when you're stuck, it pulls on that thread to hand you the next beat. The heart of the app — **the thread** — is named for exactly this.
+
 ## Fully local & private
 
 - **No cloud, no API keys.** All inference runs on local models through Ollama.
