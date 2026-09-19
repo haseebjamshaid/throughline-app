@@ -2,8 +2,6 @@
 
 **A local-first second brain for your Obsidian vault — a taste engine that turns your notes and images into something you can actually search and explore. Fully local. No cloud. Your data stays yours.**
 
-_Proprietary software — © 2026 Haseeb Jamshaid. All rights reserved. Not for redistribution._
-
 throughline reads your Obsidian vault, understands what's in it (themes, feelings, connections in your notes; colors, mood, framing in your images), and builds an explainable, searchable map of your taste. Everything runs on your machine via [Ollama](https://ollama.com) and local models — there are no API keys, no accounts, and nothing leaves your laptop.
 
 ## What "throughline" means
